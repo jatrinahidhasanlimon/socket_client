@@ -193,7 +193,7 @@ img{
   outline:none;
 }
 
-button{
+/* button{
   border:none;
   background:transparent;
   width:60px;
@@ -205,7 +205,7 @@ button{
   display:grid;
   place-items:center;
   transition:300ms ease;
-}
+} */
 
 button:hover{
   background:black;

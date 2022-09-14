@@ -1,5 +1,62 @@
 // console.clear();
+const chatMainContainer= document.getElementById("chatMainContainer");
+const loginMainContainer = document.getElementById("loginMainContainer");
+const userNameElem = document.getElementById("username");
+const bookingIDElem = document.getElementById("booking_id");
+const validationMessageElem = document.getElementById("validationMessage");
+function checkAuth(){
+  var url = 'http://localhost:7000/rental/start-chat';
+  
+  // Making our request 
+  fetch(url, {
+     method: 'POST' ,
+     body: JSON.stringify({
+      userName: 'userbane',
+      bookingID: 'booking9000'
+    }),
+    headers: {
+      'Content-Type': 'application/json'
+      // 'Content-Type': 'application/x-www-form-urlencoded',
+    }
+})
+      .then(Result => Result.json())
+      .then(string => {
+          // Printing our response 
+          console.log(string);
+      })
+      .catch(errorMsg => { console.log(errorMsg); });
+}
 
+function showLoginToggle(){
+  if(loginMainContainer.classList.contains('d-none')){
+      loginMainContainer.classList.remove('d-none')
+    }
+    else{
+    loginMainContainer.classList.add('d-none')
+    }
+}
+function startChat(){
+  checkAuth()
+
+
+  validationMessageElem.innerHTML = "";
+  console.log('username is: ', userNameElem.value)
+  console.log('bookingID is: ', bookingIDElem.value)
+  if(userNameElem.value && bookingIDElem.value){
+    validationMessageElem.innerHTML = "";
+    loginMainContainer.classList.add("d-none");
+    chatMainContainer.classList.remove("d-none");
+  }else{
+    validationMessageElem.innerHTML += 
+    "<h6 class='text-danger'>Please Enter Username and Booking ID</h6>";
+  }
+  
+
+}
+
+const userDetails = {
+  name: 'user 1'
+}
 const socket = io("http://localhost:3000",{
   auth: {
     token: "abcdefghij"
@@ -8,7 +65,7 @@ const socket = io("http://localhost:3000",{
 
 socket.on("connect", () => {
   console.log(socket.connected); // true
-  socket.emit('adduser', prompt("What's your name: "));
+  socket.emit('adduser', 'user1');
 });
 
 socket.on("newMessage", (response) => {
@@ -124,6 +181,15 @@ sendMessage.addEventListener("click", (e)=> {
   }
 
   
+});
+
+
+
+
+socket.on("connect_error", (err) => {
+  console.log(err instanceof Error); // true
+  console.log(err.message); // not authorized
+  console.log(err.data); // { content: "Please retry later" }
 });
 
 
