@@ -99,6 +99,11 @@ function startChat(){
       console.log(err.message); // not authorized
       console.log(err.data); // { content: "Please retry later" }
     });
+    socket.on("private", (data) => {
+      console.log('private event')
+      console.log('room text is', data); 
+      
+    });
 
     sendMessage.addEventListener("click", (e)=> {
       if(message.value){
@@ -133,7 +138,10 @@ function startChat(){
         chatContainer.appendChild(text);
         chatContainer.scrollTop = chatContainer.scrollHeight;
         // for socket 
-        socket.emit('createMessage', message.value);
+        socket.emit('createMessage', {
+          message: message.value,
+          roomID: 'etc'
+        });
         // for socket 
     
         message.value = "";
