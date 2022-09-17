@@ -102,6 +102,10 @@ function startChat(){
     socket.on("private", (data) => {
       console.log('private event')
       console.log('room text is', data); 
+      window.localStorage.setItem('room', data.roomID);
+      if(data.messageHistory.length > 0){
+        console.log('Message History Exist. ')
+      }
       
     });
 
@@ -120,7 +124,7 @@ function startChat(){
         let minutes = date.getMinutes() + "";
         let time = `${hours}:${minutes.padStart(2, "0")}`;
     
-        name.innerText = "Laurie";
+        name.innerText = userNameElem.value;
         timeStamp.classList.add("timestamp");
         timeStamp.innerText = time;
         textContent.classList.add("text-content");
@@ -138,17 +142,15 @@ function startChat(){
         chatContainer.appendChild(text);
         chatContainer.scrollTop = chatContainer.scrollHeight;
         // for socket 
-        socket.emit('createMessage', {
+        console.log('local storage room details: ', window.localStorage.getItem('room'))
+        socket.emit('createMessageOnRoom', {
           message: message.value,
-          roomID: 'etc'
+          roomID: window.localStorage.getItem('room')
         });
         // for socket 
-    
         message.value = "";
-        
       }
       
-    
       
     });
 
@@ -172,22 +174,21 @@ function appendChatText (data){
   let textContent = document.createElement("div");
   let timeStamp = document.createElement("span");
   let name = document.createElement("h5");
-  
   // okay 
   let date = new Date();
   let hours = date.getHours();
   let minutes = date.getMinutes() + "";
   let time = `${hours}:${minutes.padStart(2, "0")}`;
 
-  name.innerText = "test";
+  name.innerText = data.sender.userName;
   timeStamp.classList.add("timestamp");
   timeStamp.innerText = time;
   textContent.classList.add("text-content");
   textContent.appendChild(name);
-  textContent.append(message.value);
+  textContent.append(data.message);
   textContent.appendChild(timeStamp);
   // pic.setAttribute("src", "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80");
-  pic.setAttribute("src", avatarUrlElem.value);
+  pic.setAttribute("src", data.sender.avatarUrl);
   text.classList.add("text");
   profilePicContainer.classList.add("profile-pic");
   profilePicContainer.appendChild(pic);
